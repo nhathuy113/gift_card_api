@@ -1,10 +1,12 @@
 class User < ApplicationRecord
+  include Auditable
+
   has_secure_password
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
   enum :role, { admin: "admin", client: "client" }
-  enum :state, { active: "active", inactive: "inactive" }, default: "active"
+  enum :state, { active: "active", inactive: "inactive" }, default: "active", validate: true
 
   scope :active, -> { where(state: "active") }
 

@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_105000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "action", null: false
+    t.string "auditable_type"
+    t.bigint "auditable_id"
+    t.jsonb "before_values"
+    t.jsonb "after_values"
+    t.string "outcome", default: "success", null: false
+    t.string "ip"
+    t.string "user_agent"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["action", "created_at"], name: "index_audit_logs_on_action_and_created_at"
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+    t.check_constraint "outcome::text = ANY (ARRAY['success'::character varying, 'refused'::character varying]::text[])", name: "audit_logs_outcome_check"
+  end
 
   create_table "brands", force: :cascade do |t|
     t.string "name", null: false
@@ -23,7 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_brands_on_name", unique: true
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "brands_custom_fields_max5"
-    t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "brands_state_check"
+    t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "brands_state_check"
   end
 
   create_table "cards", force: :cascade do |t|
@@ -66,9 +86,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_products_on_brand_id"
-    t.check_constraint "price_value > 0", name: "products_price_value_positive"
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "products_custom_fields_max5"
-    t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "products_state_check"
+    t.check_constraint "price_value > 0", name: "products_price_value_positive"
+    t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "products_state_check"
   end
 
   create_table "users", force: :cascade do |t|
@@ -81,10 +101,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.check_constraint "role::text = 'client'::text AND payout_rate >= 0::numeric AND payout_rate <= 100::numeric OR role::text = 'admin'::text AND payout_rate IS NULL", name: "users_payout_rate_check"
-    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying::text, 'client'::character varying::text])", name: "users_role_check"
-    t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "users_state_check"
+    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying, 'client'::character varying]::text[])", name: "users_role_check"
+    t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "users_state_check"
   end
 
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "cards", "products"
   add_foreign_key "cards", "users", column: "client_id"
   add_foreign_key "client_accessible_products", "products"

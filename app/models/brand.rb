@@ -1,5 +1,7 @@
 class Brand < ApplicationRecord
-  enum :state, { active: "active", inactive: "inactive" }, default: "active"
+  include Auditable
+
+  enum :state, { active: "active", inactive: "inactive" }, default: "active", validate: true
   has_many :products, dependent: :restrict_with_error
 
   validates :name, presence: true, uniqueness: true

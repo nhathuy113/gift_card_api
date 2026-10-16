@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       post "login", to: "auth#login"
 
       namespace :admin do
+        resources :audit_logs, only: :index
         resources :clients, only: [:create] do
           resource :client_accessible_products, only: %i[show update]
         end
