@@ -18,8 +18,4 @@ class User < ApplicationRecord
                           numericality: { in: 0..100 },
                           if: :client?
   validates :payout_rate, absence: true, if: :admin?
-
-  def active_for_authentication?
-    active?
-  end
 end
