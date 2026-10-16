@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
       namespace :admin do
         resources :clients, only: [:create] do
-          resource :products, only: %i[show update], controller: "client_products"
+          resource :client_accessible_products, only: %i[show update]
         end
         resources :brands, except: :destroy do
           patch :state, on: :member

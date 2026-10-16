@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_090936) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_095700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -23,7 +23,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_090936) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_brands_on_name", unique: true
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "brands_custom_fields_max5"
-    t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "brands_state_check"
+    t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "brands_state_check"
+  end
+
+  create_table "client_accessible_products", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id", "product_id"], name: "index_client_accessible_products_on_client_id_and_product_id", unique: true
+    t.index ["client_id"], name: "index_client_accessible_products_on_client_id"
+    t.index ["product_id"], name: "index_client_accessible_products_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -37,7 +47,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_090936) do
     t.index ["brand_id"], name: "index_products_on_brand_id"
     t.check_constraint "price_value > 0", name: "products_price_value_positive"
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "products_custom_fields_max5"
-    t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "products_state_check"
+    t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "products_state_check"
   end
 
   create_table "users", force: :cascade do |t|
@@ -54,5 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_090936) do
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "users_state_check"
   end
 
+  add_foreign_key "client_accessible_products", "products"
+  add_foreign_key "client_accessible_products", "users", column: "client_id"
   add_foreign_key "products", "brands"
 end
