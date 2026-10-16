@@ -5,5 +5,6 @@ class Client < User
   has_many :client_accessible_products, dependent: :delete_all
   has_many :accessible_products, through: :client_accessible_products, source: :product
 
+  has_many :cards, dependent: :restrict_with_error
   validates :payout_rate, presence: true, numericality: { in: 0..100 }
 end

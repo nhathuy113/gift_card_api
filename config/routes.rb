@@ -17,6 +17,13 @@ Rails.application.routes.draw do
         end
       end
 
+      namespace :client do
+        resources :products, only: :index
+        resources :cards, only: %i[index show create] do
+          post :cancel, on: :member
+        end
+      end
+
       if Rails.env.test?
         namespace :admin do
           get "test", to: "test_endpoints#index"
