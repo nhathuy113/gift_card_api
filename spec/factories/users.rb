@@ -19,5 +19,8 @@ FactoryBot.define do
     trait :inactive do
       state { "inactive" }
     end
+
+    factory :admin, class: "Admin", traits: [:admin]
+    factory :client, class: "Client", traits: [:client]
   end
 end
