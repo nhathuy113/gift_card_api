@@ -10,7 +10,10 @@ FactoryBot.define do
       state { "inactive" }
     end
 
-    factory :admin, class: "Admin", traits: [:admin]
+    factory :admin, class: "Admin", traits: [:admin] do
+      payout_rate { nil }
+    end
+
     factory :client, class: "Client", traits: [:client]
   end
 end
