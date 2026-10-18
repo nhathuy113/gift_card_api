@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "login", to: "auth#login"
+
+      namespace :admin do
+        resources :clients, only: [:create]
+      end
     end
   end
 end
