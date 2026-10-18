@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: Gift card API
+  version: v1
+  description: Users log in. An admin creates clients.
+servers:
+  - url: /
+paths:
+  /api/v1/login:
+    post:
+      summary: Log in
+      tags: [Login]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Token and the current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Login"
+        "401":
+          $ref: "#/components/responses/Error"
+  /api/v1/admin/clients:
+    post:
+      summary: Create a client
+      tags: [Admin]
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, payout_rate]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                payout_rate:
+                  type: number
+      responses:
+        "201":
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Validation"
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    Validation:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+  schemas:
+    Login:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            role:
+              type: string
+              enum: [admin, client]
+            state:
+              type: string
+            payout_rate:
+              type: number
+              nullable: true
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+        state:
+          type: string
+        payout_rate:
+          type: number
