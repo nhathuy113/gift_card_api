@@ -35,8 +35,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_090936) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_products_on_brand_id"
-    t.check_constraint "price_value > 0", name: "products_price_value_positive"
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "products_custom_fields_max5"
+    t.check_constraint "price_value > 0", name: "products_price_value_positive"
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "products_state_check"
   end
 
