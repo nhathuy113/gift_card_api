@@ -22,21 +22,33 @@ gem "bootsnap", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
+# Sign and verify login tokens
 gem "jwt", "~> 2.9"
+# Serve the OpenAPI file at /api-docs
 gem "rswag-api", "~> 2.17"
+# Swagger UI at /api-docs
 gem "rswag-ui", "~> 2.17"
+# rswag-ui requires ostruct; Ruby 3.4 does not load it unless declared
 gem "ostruct"
+# Allowlist JSON attributes so password_digest is not rendered
+gem "alba", "~> 4.0"
 
 
 group :development, :test do
+  # CI: known vulnerable gems in Gemfile.lock
   gem "bundler-audit", require: false
+  # CI: Rails security scan
   gem "brakeman", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
+  # Request and model specs
   gem "rspec-rails", "~> 7.1"
+  # Spec factories
   gem "factory_bot_rails"
+  # Unique emails in factories
   gem "faker"
+  # Validation matchers in model specs
   gem "shoulda-matchers", "~> 8.0"
 end

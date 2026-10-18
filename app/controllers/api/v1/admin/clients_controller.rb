@@ -6,7 +6,7 @@ module Api
           client = ::Client.new(client_params)
           return render json: client.errors, status: :unprocessable_entity unless client.save
 
-          render json: client, status: :created
+          render json: ClientSerializer.new(client), status: :created
         end
 
         private

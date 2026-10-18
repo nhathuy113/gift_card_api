@@ -14,7 +14,13 @@ RSpec.describe "Admin clients API" do
       "state" => "active",
       "payout_rate" => "12.5"
     )
-    expect(response.parsed_body.keys).not_to include("password")
+    expect(response.parsed_body.keys).to eq(%w[id email role state payout_rate])
+  end
+
+  it "omits password and password_digest" do
+    post "/api/v1/admin/clients", params: payload, headers: headers, as: :json
+
+    expect(response.parsed_body.keys).not_to include("password", "password_digest")
   end
 
   it "sets the password" do
