@@ -3,7 +3,7 @@ module Api
     module Admin
       class ClientsController < BaseController
         def create
-          client = Client.new(client_params)
+          client = ::Client.new(client_params)
           return render json: client.errors, status: :unprocessable_entity unless client.save
 
           render json: client, status: :created
