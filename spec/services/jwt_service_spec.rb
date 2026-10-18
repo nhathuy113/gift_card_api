@@ -4,7 +4,7 @@ RSpec.describe JwtService do
   let(:user) { instance_double(User, id: 1, role: "admin") }
 
   describe ".encode and .decode" do
-    it "encodes and decodes payload with default 1-hour expiry" do
+    it "encodes and decodes payload with default 12-hour expiry" do
       freeze_time do
         token = described_class.encode(user)
         decoded = described_class.decode(token)
@@ -16,7 +16,7 @@ RSpec.describe JwtService do
     end
 
     it "returns nil for expired token" do
-      token = travel_to(2.hours.ago) { described_class.encode(user) }
+      token = travel_to(13.hours.ago) { described_class.encode(user) }
       expect(described_class.decode(token)).to be_nil
     end
 
