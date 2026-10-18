@@ -9,6 +9,12 @@ Rails.application.routes.draw do
 
       namespace :admin do
         resources :clients, only: [:create]
+        resources :brands, except: :destroy do
+          patch :state, on: :member
+          resources :products, except: :show, shallow: true do
+            patch :state, on: :member
+          end
+        end
       end
     end
   end
