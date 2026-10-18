@@ -12,7 +12,7 @@ RSpec.describe "Admin clients API" do
       "email" => "new-client@example.com",
       "role" => "client",
       "state" => "active",
-      "payout_rate" => "12.5"
+      "payout_rate" => 12.5
     )
     expect(response.parsed_body.keys).to eq(%w[id email role state payout_rate])
   end
