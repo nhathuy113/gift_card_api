@@ -23,6 +23,9 @@ gem "bootsnap", require: false
 gem "rack-cors"
 
 gem "jwt", "~> 2.9"
+gem "rswag-api", "~> 2.17"
+gem "rswag-ui", "~> 2.17"
+gem "ostruct"
 
 
 group :development, :test do

@@ -1,24 +1,36 @@
-# README
+# Gift card API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails 8.1 JSON API. Ruby 3.4.4, PostgreSQL.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+```sh
+docker compose up -d
+bundle install
+bin/rails db:prepare
+bin/rails db:seed
+bin/rails server
+```
 
-* System dependencies
+Postgres in compose uses `postgres` / `password` on port 5432. Seed creates `admin@example.com` / `password123`. Override with `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
 
-* Configuration
+Swagger UI: [http://localhost:3000/api-docs](http://localhost:3000/api-docs). Spec file: `swagger/v1/swagger.yaml`.
 
-* Database creation
+Tests:
 
-* Database initialization
+```sh
+bundle exec rspec
+```
 
-* How to run the test suite
+## API
 
-* Services (job queues, cache servers, search engines, etc.)
+Login returns a token. Later requests send `Authorization: Bearer <token>`. The token lasts 12 hours.
 
-* Deployment instructions
+```sh
+curl -s -X POST http://localhost:3000/api/v1/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@example.com","password":"password123"}'
+```
 
-* ...
+- `POST /api/v1/login` with `email` and `password`.
+- `POST /api/v1/admin/clients` with `email`, `password`, and `payout_rate`. Admin token only.
