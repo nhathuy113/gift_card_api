@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Gift card API
   version: v1
-  description: Users log in. An admin creates clients.
+  description: Users log in. An admin creates clients, brands, and products.
 servers:
   - url: /
 paths:
@@ -64,7 +64,266 @@ paths:
           $ref: "#/components/responses/Error"
         "422":
           $ref: "#/components/responses/Validation"
+  /api/v1/admin/brands:
+    get:
+      summary: List brands
+      tags: [Admin]
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Brands ordered by name
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brand"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+    post:
+      summary: Create a brand
+      tags: [Admin]
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandInput"
+      responses:
+        "201":
+          description: Created brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /api/v1/admin/brands/{id}:
+    get:
+      summary: Show a brand
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    patch:
+      summary: Update a brand
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandInput"
+      responses:
+        "200":
+          description: Updated brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /api/v1/admin/brands/{id}/state:
+    patch:
+      summary: Change brand state
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StateInput"
+      responses:
+        "200":
+          description: Updated brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /api/v1/admin/brands/{brand_id}/products:
+    get:
+      summary: List products of a brand
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/BrandId"
+      responses:
+        "200":
+          description: Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    post:
+      summary: Create a product
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/BrandId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /api/v1/admin/products/{id}:
+    patch:
+      summary: Update a product
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      summary: Delete a product
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /api/v1/admin/products/{id}/state:
+    patch:
+      summary: Change product state
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StateInput"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    BrandId:
+      name: brand_id
+      in: path
+      required: true
+      schema:
+        type: integer
   securitySchemes:
     bearer:
       type: http
@@ -124,3 +383,78 @@ components:
           type: string
         payout_rate:
           type: number
+    CustomField:
+      type: object
+      required: [name, value]
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    Brand:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        state:
+          type: string
+          enum: [active, inactive]
+        custom_fields:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/CustomField"
+    BrandInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        custom_fields:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/CustomField"
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        brand_id:
+          type: integer
+        name:
+          type: string
+        price_value:
+          type: integer
+          minimum: 1
+        state:
+          type: string
+          enum: [active, inactive]
+        custom_fields:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/CustomField"
+    ProductInput:
+      type: object
+      required: [name, price_value]
+      properties:
+        name:
+          type: string
+        price_value:
+          type: integer
+          minimum: 1
+        custom_fields:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/CustomField"
+    StateInput:
+      type: object
+      required: [state]
+      properties:
+        state:
+          type: string
+          enum: [active, inactive]
