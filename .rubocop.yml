@@ -5,3 +5,19 @@ inherit_gem:
 # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 Layout/SpaceInsideArrayLiteralBrackets:
   EnforcedStyle: no_space
+
+# Omakase disables the Lint department. Keep this cop on so a debugger call fails CI.
+Lint/Debugger:
+  Enabled: true
+
+# Omakase only checks app, config, lib, test, and the Gemfile.
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+  Include:
+    - "app/**/*"
+    - "config/**/*"
+    - "lib/**/*"
+    - "test/**/*"
+    - "spec/**/*"
+    - "Gemfile"
