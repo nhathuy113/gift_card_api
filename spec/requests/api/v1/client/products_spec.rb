@@ -22,7 +22,7 @@ RSpec.describe "Client Products API" do
     get "/api/v1/client/products", params: { brand_id: brand.id }, headers: headers
 
     expect(response).to have_http_status(:ok)
-    expect(response.parsed_body.pluck("id")).to eq([ product.id ])
+    expect(response.parsed_body.pluck("id")).to eq([product.id])
   end
 
   it "filters by name" do
@@ -31,6 +31,6 @@ RSpec.describe "Client Products API" do
     get "/api/v1/client/products", params: { q: "coffee" }, headers: headers
 
     expect(response).to have_http_status(:ok)
-    expect(response.parsed_body.pluck("id")).to eq([ product.id ])
+    expect(response.parsed_body.pluck("id")).to eq([product.id])
   end
 end

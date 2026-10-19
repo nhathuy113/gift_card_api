@@ -5,6 +5,6 @@ class CreateClientAccessibleProducts < ActiveRecord::Migration[8.1]
       t.references :product, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :client_accessible_products, [ :client_id, :product_id ], unique: true
+    add_index :client_accessible_products, [:client_id, :product_id], unique: true
   end
 end
