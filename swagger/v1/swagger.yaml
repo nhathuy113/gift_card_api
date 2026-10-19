@@ -310,6 +310,58 @@ paths:
           $ref: "#/components/responses/Error"
         "422":
           $ref: "#/components/responses/Error"
+  /api/v1/client/cards:
+    post:
+      summary: Issue a card
+      tags: [Client]
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id, activation_number]
+              properties:
+                product_id:
+                  type: integer
+                  example: 1
+                activation_number:
+                  type: string
+                  pattern: "^\\d{16}$"
+                  example: "0000000000000099"
+      responses:
+        "201":
+          description: Issued card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+        "200":
+          description: Same activation number and product returns the existing card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          description: Activation number is already used
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Activation number is already used
+        "422":
+          $ref: "#/components/responses/Error"
 components:
   parameters:
     Id:
@@ -451,6 +503,39 @@ components:
           maxItems: 5
           items:
             $ref: "#/components/schemas/CustomField"
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        client_id:
+          type: integer
+        product_id:
+          type: integer
+        activation_number:
+          type: string
+          example: "0000000000000099"
+        status:
+          type: string
+          enum: [issued, cancelled]
+        price_value:
+          type: integer
+        payout_rate:
+          type: string
+          example: "12.5"
+        issued_at:
+          type: string
+          format: date-time
+        cancelled_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
     StateInput:
       type: object
       required: [state]

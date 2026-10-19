@@ -8,13 +8,20 @@ Rails.application.routes.draw do
       post "login", to: "auth#login"
 
       namespace :admin do
-        resources :clients, only: [:create]
+        resources :clients, only: [:create] do
+          resource :client_accessible_products, only: %i[show update]
+        end
         resources :brands, except: :destroy do
           patch :state, on: :member
           resources :products, except: :show, shallow: true do
             patch :state, on: :member
           end
         end
+      end
+
+      namespace :client do
+        resources :products, only: :index
+        resources :cards, only: :create
       end
     end
   end
