@@ -18,6 +18,10 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      namespace :client do
+        resources :products, only: :index
+      end
     end
   end
 end

@@ -3,7 +3,7 @@ class Client < User
   after_initialize { self.role = :client if new_record? }
 
   has_many :client_accessible_products, dependent: :delete_all
-  has_many :accessible_products, through: :client_accessible_products, source: :product
+  has_many :accessible_products, through: :client_accessible_products, source: :product, inverse_of: :clients
 
   validates :payout_rate, presence: true, numericality: { in: 0..100 }
 end
