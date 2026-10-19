@@ -21,6 +21,7 @@ Rails.application.routes.draw do
 
       namespace :client do
         resources :products, only: :index
+        resources :cards, only: :create
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_095700) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -24,6 +24,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_095700) do
     t.index ["name"], name: "index_brands_on_name", unique: true
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "brands_custom_fields_max5"
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "brands_state_check"
+  end
+
+  create_table "cards", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "product_id", null: false
+    t.string "activation_number", null: false
+    t.string "pin"
+    t.string "status", default: "issued", null: false
+    t.integer "price_value", null: false
+    t.decimal "payout_rate", precision: 5, scale: 2, null: false
+    t.datetime "issued_at", null: false
+    t.datetime "cancelled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activation_number"], name: "index_cards_on_activation_number", unique: true
+    t.index ["client_id"], name: "index_cards_on_client_id"
+    t.index ["product_id"], name: "index_cards_on_product_id"
+    t.check_constraint "status::text = 'issued'::text AND cancelled_at IS NULL OR status::text = 'cancelled'::text AND cancelled_at IS NOT NULL", name: "cards_cancelled_at_check"
+    t.check_constraint "status::text = ANY (ARRAY['issued'::character varying, 'cancelled'::character varying]::text[])", name: "cards_status_check"
   end
 
   create_table "client_accessible_products", force: :cascade do |t|
@@ -64,6 +83,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_095700) do
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "users_state_check"
   end
 
+  add_foreign_key "cards", "products"
+  add_foreign_key "cards", "users", column: "client_id"
   add_foreign_key "client_accessible_products", "products"
   add_foreign_key "client_accessible_products", "users", column: "client_id"
   add_foreign_key "products", "brands"

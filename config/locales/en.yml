@@ -1,0 +1,14 @@
+en:
+  activerecord:
+    errors:
+      models:
+        card:
+          attributes:
+            activation_number:
+              invalid: activation_number must be 16 digits
+  cards:
+    issue:
+      activation_number_used: Activation number is already used
+      client_inactive: Client is inactive
+      product_not_accessible: Product not found or not accessible
+      product_unavailable: Product is not available
