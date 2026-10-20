@@ -26,6 +26,14 @@ RSpec.describe "Admin client accessible products API" do
       expect(response.parsed_body.pluck("id")).to match_array([product_a.id, product_b.id])
     end
 
+    it "keeps the previous products when the audit log fails" do
+      allow(AuditLog).to receive(:record).and_raise(ActiveRecord::ActiveRecordError)
+
+      client.accessible_product_ids = [product_a.id] rescue ActiveRecord::ActiveRecordError
+
+      expect(client.accessible_products.reload.ids).to eq([])
+    end
+
     it "records the assigned product ids" do
       put "/api/v1/admin/clients/#{client.id}/client_accessible_products",
           params: { product_ids: [product_a.id, product_b.id] },
