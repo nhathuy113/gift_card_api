@@ -27,6 +27,24 @@ RSpec.describe "Authentication API", type: :request do
     expect(response.parsed_body.dig("user", "payout_rate")).to eq(15.5)
   end
 
+  it "rejects an inactive client" do
+    create(:client, :inactive, email: "off@example.com", password:, payout_rate: 10)
+
+    login("off@example.com")
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
+  it "rejects a token after the client is deactivated" do
+    client = Client.find_by!(email: "client@example.com")
+    token = JwtService.encode(client)
+    client.update!(state: "inactive")
+
+    get "/api/v1/client/products", headers: { "Authorization" => "Bearer #{token}" }
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
   it "rejects a bad login" do
     login("admin@example.com", "wrong")
 

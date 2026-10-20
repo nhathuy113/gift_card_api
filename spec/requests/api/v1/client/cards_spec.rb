@@ -39,6 +39,28 @@ RSpec.describe "Client Cards API" do
     expect(response.parsed_body["activation_number"]).to eq("0000000000000099")
   end
 
+  it "refuses an inactive product" do
+    product.update!(state: "inactive")
+
+    post "/api/v1/client/cards",
+         params: { product_id: product.id, activation_number: "0000000000000003" },
+         headers: headers,
+         as: :json
+
+    expect(response.parsed_body["error"]).to eq("Product is not available")
+  end
+
+  it "refuses a product from an inactive brand" do
+    product.brand.update!(state: "inactive")
+
+    post "/api/v1/client/cards",
+         params: { product_id: product.id, activation_number: "0000000000000004" },
+         headers: headers,
+         as: :json
+
+    expect(response.parsed_body["error"]).to eq("Product is not available")
+  end
+
   it "refuses a product the client cannot access" do
     other = create(:product, brand: create(:brand), price_value: 20_000)
 
