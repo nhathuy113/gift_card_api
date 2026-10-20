@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         get "reports/brands", to: "reports#brands"
         get "reports/clients", to: "reports#clients"
         resources :audit_logs, only: :index
-        resources :clients, only: [:create] do
+        resources :clients, only: [:index, :show, :create] do
           patch :state, on: :member
           resource :client_accessible_products, only: %i[show update]
         end

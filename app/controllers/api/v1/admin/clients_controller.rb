@@ -2,6 +2,14 @@ module Api
   module V1
     module Admin
       class ClientsController < BaseController
+        def index
+          render json: ClientSerializer.new(::Client.order(:email))
+        end
+
+        def show
+          render json: ClientSerializer.new(::Client.find(params[:id]))
+        end
+
         def create
           client = ::Client.new(client_params)
           return render json: client.errors, status: :unprocessable_entity unless client.save

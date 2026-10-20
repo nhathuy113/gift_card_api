@@ -4,6 +4,27 @@ RSpec.describe "Admin clients API" do
   let(:headers) { { "Authorization" => "Bearer #{JwtService.encode(create(:admin))}" } }
   let(:payload) { { email: "new-client@example.com", password: "secret123", payout_rate: 12.5 } }
 
+  describe "GET /api/v1/admin/clients" do
+    let!(:zoe) { create(:client, email: "zoe@example.com") }
+    let!(:amy) { create(:client, email: "amy@example.com") }
+
+    it "lists clients by email" do
+      get "/api/v1/admin/clients", headers: headers
+
+      expect(response.parsed_body.pluck("email")).to eq(["amy@example.com", "zoe@example.com"])
+    end
+  end
+
+  describe "GET /api/v1/admin/clients/:id" do
+    let(:client) { create(:client, email: "shown@example.com") }
+
+    it "shows the client" do
+      get "/api/v1/admin/clients/#{client.id}", headers: headers
+
+      expect(response.parsed_body).to include("id" => client.id, "email" => "shown@example.com")
+    end
+  end
+
   it "creates a client" do
     post "/api/v1/admin/clients", params: payload, headers: headers, as: :json
 
