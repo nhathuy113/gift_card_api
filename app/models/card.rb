@@ -1,6 +1,8 @@
 class Card < ApplicationRecord
   ACTIVATION_NUMBER_FORMAT = /\A\d{16}\z/
 
+  after_create { Audit::Issue.write(self) }
+
   belongs_to :client
   belongs_to :product
 

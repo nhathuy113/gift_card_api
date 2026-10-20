@@ -14,6 +14,35 @@ RSpec.describe Cards::Issue do
     expect(result.card.payout_rate).to eq(15.0)
   end
 
+  it "records the issue without a pin" do
+    described_class.call(client:, product_id: product.id, activation_number: "0000000000000001")
+
+    expect(AuditLog.last.attributes.slice("action", "after_values")).to eq(
+      "action" => "card.issue",
+      "after_values" => {
+        "product_id" => product.id,
+        "price_value" => 100_000,
+        "payout_rate" => "15.0"
+      }
+    )
+  end
+
+  it "records a refused issue" do
+    expect {
+      described_class.call(client:, product_id: create(:product).id, activation_number: "0000000000000002")
+    }.to raise_error(Cards::Issue::Ineligible)
+      .and change { AuditLog.refused.where(action: "card.issue").count }.by(1)
+  end
+
+  it "drops the card when recording the issue fails" do
+    allow(AuditLog).to receive(:record).and_raise(ActiveRecord::ActiveRecordError)
+
+    expect {
+      described_class.call(client:, product_id: product.id, activation_number: "0000000000000001")
+    }.to raise_error(ActiveRecord::ActiveRecordError)
+      .and change(Card, :count).by(0)
+  end
+
   it "returns the same card for the same key" do
     first = described_class.call(client:, product_id: product.id, activation_number: "0000000000000001")
     again = described_class.call(client:, product_id: product.id, activation_number: "0000000000000001")

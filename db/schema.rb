@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_105000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "action", null: false
+    t.string "auditable_type"
+    t.bigint "auditable_id"
+    t.jsonb "before_values"
+    t.jsonb "after_values"
+    t.string "outcome", default: "success", null: false
+    t.string "ip"
+    t.string "user_agent"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["action", "created_at"], name: "index_audit_logs_on_action_and_created_at"
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+    t.check_constraint "outcome::text = ANY (ARRAY['success'::character varying, 'refused'::character varying]::text[])", name: "audit_logs_outcome_check"
+  end
 
   create_table "brands", force: :cascade do |t|
     t.string "name", null: false
@@ -83,6 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_100800) do
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "users_state_check"
   end
 
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "cards", "products"
   add_foreign_key "cards", "users", column: "client_id"
   add_foreign_key "client_accessible_products", "products"

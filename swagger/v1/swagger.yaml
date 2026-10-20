@@ -362,6 +362,56 @@ paths:
                     example: Activation number is already used
         "422":
           $ref: "#/components/responses/Error"
+  /api/v1/admin/audit_logs:
+    get:
+      summary: List audit logs
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: record_type
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Audit logs, newest first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogPage"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
 components:
   parameters:
     Id:
@@ -536,6 +586,59 @@ components:
         updated_at:
           type: string
           format: date-time
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+          nullable: true
+        action:
+          type: string
+        auditable_type:
+          type: string
+          nullable: true
+        auditable_id:
+          type: integer
+          nullable: true
+        before_values:
+          type: object
+          nullable: true
+          additionalProperties: true
+        after_values:
+          type: object
+          nullable: true
+          additionalProperties: true
+        outcome:
+          type: string
+          enum: [success, refused]
+        ip:
+          type: string
+          nullable: true
+        user_agent:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+    AuditLogPage:
+      type: object
+      required: [audit_logs, page, per_page, total]
+      properties:
+        audit_logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
     StateInput:
       type: object
       required: [state]

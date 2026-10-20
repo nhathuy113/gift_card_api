@@ -5,9 +5,13 @@ module Api
 
       def login
         user = User.authenticate_by(email: login_params[:email], password: login_params[:password])
+        unless user&.active?
+          AuditLog.record(action: "login.failed", outcome: :refused, metadata: { email: login_params[:email] })
+          return render_invalid_credentials
+        end
 
-        return render_invalid_credentials unless user&.active?
-
+        Current.user = user
+        AuditLog.record(action: "login.success", record: user)
         token = JwtService.encode(user)
 
         render json: {

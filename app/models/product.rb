@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  include Auditable
+
   enum :state, { active: "active", inactive: "inactive" }, default: "active"
   belongs_to :brand
   has_many :client_accessible_products, dependent: :delete_all, inverse_of: :product

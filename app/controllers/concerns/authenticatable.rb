@@ -11,7 +11,9 @@ module Authenticatable
 
   def authenticate!
     @current_user = authenticate_token
-    render json: { error: "Unauthorized" }, status: :unauthorized unless @current_user
+    return render json: { error: "Unauthorized" }, status: :unauthorized unless @current_user
+
+    Current.user = @current_user
   end
 
   def authenticate_token

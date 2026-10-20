@@ -23,6 +23,12 @@ RSpec.describe "Admin clients API" do
     expect(response.parsed_body.keys).not_to include("password", "password_digest")
   end
 
+  it "records the new client" do
+    post "/api/v1/admin/clients", params: payload, headers: headers, as: :json
+
+    expect(AuditLog.last.action).to eq("client.create")
+  end
+
   it "sets the password" do
     post "/api/v1/admin/clients", params: payload, headers: headers, as: :json
 
