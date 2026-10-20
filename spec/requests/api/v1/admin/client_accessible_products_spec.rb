@@ -25,5 +25,15 @@ RSpec.describe "Admin client accessible products API" do
 
       expect(response.parsed_body.pluck("id")).to match_array([product_a.id, product_b.id])
     end
+
+    it "records the assigned product ids" do
+      put "/api/v1/admin/clients/#{client.id}/client_accessible_products",
+          params: { product_ids: [product_a.id, product_b.id] },
+          headers: headers,
+          as: :json
+
+      log = AuditLog.find_by!(action: "client_accessible_product.update")
+      expect(log.after_values["product_ids"]).to eq([product_a.id, product_b.id].sort)
+    end
   end
 end
