@@ -30,6 +30,7 @@ module Api
         token = request.authorization.to_s[/\ABearer (.+)\z/, 1]
         payload = JwtService.decode(token)
         RevokedToken.create!(jti: payload.fetch(:jti), expires_at: Time.zone.at(payload.fetch(:exp)))
+        AuditLog.record(action: "logout.success", record: current_user)
         head :no_content
       end
 
