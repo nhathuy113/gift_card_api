@@ -4,6 +4,10 @@ FactoryBot.define do
     state { "active" }
     custom_fields { [] }
 
+    trait :active do
+      state { "active" }
+    end
+
     trait :inactive do
       state { "inactive" }
     end
