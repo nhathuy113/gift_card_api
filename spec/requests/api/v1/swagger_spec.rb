@@ -34,4 +34,34 @@ RSpec.describe "GET /api-docs/v1/swagger.yaml" do
     responses = YAML.safe_load(response.body).dig("paths", "/api/v1/admin/clients/{id}/state", "patch", "responses")
     expect(responses.keys).to eq(%w[200 401 403 404 422])
   end
+
+  it "lists the brand report responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/admin/reports/brands", "get", "responses")
+    expect(responses.keys).to eq(%w[200 400 401 403])
+  end
+
+  it "requires brand report totals" do
+    get "/api-docs/v1/swagger.yaml"
+
+    schema = YAML.safe_load(response.body).dig(
+      "components", "schemas", "BrandReport"
+    )
+    expect(schema["required"]).to include("issued_count", "cancelled_count")
+  end
+
+  it "lists the client report responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/admin/reports/clients", "get", "responses")
+    expect(responses.keys).to eq(%w[200 400 401 403])
+  end
+
+  it "lists the client spending report responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/client/reports", "get", "responses")
+    expect(responses.keys).to eq(%w[200 400 401 403])
+  end
 end

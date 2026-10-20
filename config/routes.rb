@@ -8,6 +8,8 @@ Rails.application.routes.draw do
       post "login", to: "auth#login"
 
       namespace :admin do
+        get "reports/brands", to: "reports#brands"
+        get "reports/clients", to: "reports#clients"
         resources :audit_logs, only: :index
         resources :clients, only: [:create] do
           patch :state, on: :member
@@ -22,6 +24,7 @@ Rails.application.routes.draw do
       end
 
       namespace :client do
+        get "reports", to: "reports#show"
         resources :products, only: :index
         resources :cards, only: :create do
           post :cancel, on: :collection

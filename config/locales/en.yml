@@ -14,3 +14,5 @@ en:
       client_inactive: Client is inactive
       product_not_accessible: Product not found or not accessible
       product_unavailable: Product is not available
+  reports:
+    invalid_date: Invalid date format

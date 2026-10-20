@@ -339,6 +339,36 @@ paths:
           $ref: "#/components/responses/Error"
         "422":
           $ref: "#/components/responses/Error"
+  /api/v1/client/reports:
+    get:
+      summary: Report the client's own spending
+      tags: [Client]
+      security:
+        - bearer: []
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Totals for the authenticated client in the date range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpendingReport"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
   /api/v1/client/cards:
     post:
       summary: Issue a card
@@ -432,6 +462,70 @@ paths:
                   error:
                     type: string
                     example: Card already cancelled
+  /api/v1/admin/reports/brands:
+    get:
+      summary: Report totals by brand
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Totals per brand in the date range
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandReport"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+  /api/v1/admin/reports/clients:
+    get:
+      summary: Report totals by client
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Totals per client in the date range
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientReport"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
   /api/v1/admin/audit_logs:
     get:
       summary: List audit logs
@@ -481,6 +575,8 @@ paths:
         "401":
           $ref: "#/components/responses/Error"
         "403":
+          $ref: "#/components/responses/Error"
+        "400":
           $ref: "#/components/responses/Error"
 components:
   parameters:
@@ -695,6 +791,56 @@ components:
         created_at:
           type: string
           format: date-time
+    BrandReport:
+      type: object
+      required: [brand_id, name, issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      properties:
+        brand_id:
+          type: integer
+        name:
+          type: string
+        issued_count:
+          type: integer
+        issued_total:
+          type: integer
+        payout_total:
+          type: number
+        cancelled_count:
+          type: integer
+        cancelled_total:
+          type: integer
+    SpendingReport:
+      type: object
+      required: [issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      properties:
+        issued_count:
+          type: integer
+        issued_total:
+          type: integer
+        payout_total:
+          type: number
+        cancelled_count:
+          type: integer
+        cancelled_total:
+          type: integer
+    ClientReport:
+      type: object
+      required: [client_id, email, issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      properties:
+        client_id:
+          type: integer
+        email:
+          type: string
+        issued_count:
+          type: integer
+        issued_total:
+          type: integer
+        payout_total:
+          type: number
+        cancelled_count:
+          type: integer
+        cancelled_total:
+          type: integer
     AuditLogPage:
       type: object
       required: [audit_logs, page, per_page, total]

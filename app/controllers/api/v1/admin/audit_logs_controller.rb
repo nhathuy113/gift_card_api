@@ -13,6 +13,8 @@ module Api
             per_page: per_page,
             total: logs.count
           }
+        rescue Date::Error
+          render json: { error: I18n.t("reports.invalid_date") }, status: :bad_request
         end
 
         private
