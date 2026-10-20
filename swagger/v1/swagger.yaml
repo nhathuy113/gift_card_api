@@ -64,6 +64,35 @@ paths:
           $ref: "#/components/responses/Error"
         "422":
           $ref: "#/components/responses/Validation"
+  /api/v1/admin/clients/{id}/state:
+    patch:
+      summary: Change client state
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StateInput"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
   /api/v1/admin/brands:
     get:
       summary: List brands

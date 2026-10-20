@@ -34,4 +34,22 @@ RSpec.describe "Admin clients API" do
 
     expect(Client.find_by!(email: "new-client@example.com").authenticate("secret123")).to be_truthy
   end
+
+  describe "PATCH /api/v1/admin/clients/:id/state" do
+    let(:client) { create(:client, state: "active") }
+
+    it "changes the client to inactive" do
+      patch "/api/v1/admin/clients/#{client.id}/state", params: { state: "inactive" }, headers: headers, as: :json
+
+      expect(response.parsed_body["state"]).to eq("inactive")
+    end
+
+    context "with an unknown state" do
+      it "rejects the state" do
+        patch "/api/v1/admin/clients/#{client.id}/state", params: { state: "paused" }, headers: headers, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 end

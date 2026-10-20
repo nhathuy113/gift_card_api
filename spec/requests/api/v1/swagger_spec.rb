@@ -17,4 +17,21 @@ RSpec.describe "GET /api-docs/v1/swagger.yaml" do
     responses = YAML.safe_load(response.body).dig("paths", "/api/v1/client/cards/cancel", "post", "responses")
     expect(responses.keys).to eq(%w[200 401 403 404 422])
   end
+
+  it "requires a state to change a client" do
+    get "/api-docs/v1/swagger.yaml"
+
+    schema = YAML.safe_load(response.body).dig(
+      "paths", "/api/v1/admin/clients/{id}/state", "patch",
+      "requestBody", "content", "application/json", "schema"
+    )
+    expect(schema).to eq("$ref" => "#/components/schemas/StateInput")
+  end
+
+  it "lists the client state responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/admin/clients/{id}/state", "patch", "responses")
+    expect(responses.keys).to eq(%w[200 401 403 404 422])
+  end
 end

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       namespace :admin do
         resources :audit_logs, only: :index
         resources :clients, only: [:create] do
+          patch :state, on: :member
           resource :client_accessible_products, only: %i[show update]
         end
         resources :brands, except: :destroy do
