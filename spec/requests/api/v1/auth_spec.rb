@@ -52,6 +52,15 @@ RSpec.describe "Authentication API", type: :request do
     expect(response.parsed_body["error"]).to eq("Invalid email or password")
   end
 
+  it "rejects a token without jti" do
+    admin = User.find_by!(email: "admin@example.com")
+    token = JWT.encode({ user_id: admin.id, role: admin.role, exp: 1.hour.from_now.to_i }, Rails.application.secret_key_base, "HS256")
+
+    get "/api/v1/admin/brands", headers: { "Authorization" => "Bearer #{token}" }
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
   it "rejects an expired token" do
     login("admin@example.com")
     token = response.parsed_body.fetch("token")
