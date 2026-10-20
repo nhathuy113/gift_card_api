@@ -21,6 +21,14 @@ module Api
           render json: { error: e.message }, status: :conflict
         end
 
+        def cancel
+          card = current_client.cards.find_by!(activation_number: params[:activation_number])
+          card.cancel!
+          render json: CardSerializer.new(card)
+        rescue ActiveRecord::RecordInvalid
+          render json: { error: I18n.t("cards.cancel.already_cancelled") }, status: :unprocessable_content
+        end
+
         private
 
         def card_params

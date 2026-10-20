@@ -12,4 +12,10 @@ class Card < ApplicationRecord
   validates :price_value, numericality: { only_integer: true, greater_than: 0 }
   validates :payout_rate, numericality: { in: 0..100 }
   validates :issued_at, presence: true
+
+  def cancel!
+    raise ActiveRecord::RecordInvalid.new(self) unless issued?
+
+    update!(status: "cancelled", cancelled_at: Time.current)
+  end
 end

@@ -7,8 +7,12 @@ en:
             activation_number:
               invalid: activation_number must be 16 digits
   cards:
+    cancel:
+      already_cancelled: Card already cancelled
     issue:
       activation_number_used: Activation number is already used
       client_inactive: Client is inactive
       product_not_accessible: Product not found or not accessible
       product_unavailable: Product is not available
+  reports:
+    invalid_date: Invalid date format

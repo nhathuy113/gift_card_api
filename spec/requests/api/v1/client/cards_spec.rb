@@ -51,3 +51,44 @@ RSpec.describe "Client Cards API" do
     expect(response.parsed_body["error"]).to eq("Product not found or not accessible")
   end
 end
+
+RSpec.describe "POST /api/v1/client/cards/cancel" do
+  let(:client) { create(:client) }
+  let(:headers) { { "Authorization" => "Bearer #{JwtService.encode(client)}" } }
+  let(:card) { create(:card, client:) }
+
+  it "cancels an issued card" do
+    post "/api/v1/client/cards/cancel",
+         params: { activation_number: card.activation_number },
+         headers: headers,
+         as: :json
+
+    expect(response.parsed_body.slice("id", "status")).to eq("id" => card.id, "status" => "cancelled")
+  end
+
+  context "when the card is already cancelled" do
+    let(:card) { create(:card, :cancelled, client:) }
+
+    it "refuses the cancel" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  context "when the card belongs to another client" do
+    let(:card) { create(:card) }
+
+    it "returns not found" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number },
+           headers: headers,
+           as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+end

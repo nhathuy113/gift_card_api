@@ -3,6 +3,7 @@ class Product < ApplicationRecord
 
   enum :state, { active: "active", inactive: "inactive" }, default: "active"
   belongs_to :brand
+  has_many :cards, dependent: :restrict_with_error
   has_many :client_accessible_products, dependent: :delete_all, inverse_of: :product
   has_many :clients, through: :client_accessible_products, source: :client, inverse_of: :accessible_products
 

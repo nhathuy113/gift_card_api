@@ -88,5 +88,13 @@ RSpec.describe "Admin audit logs API" do
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    context "with a bad date" do
+      it "rejects the date" do
+        get "/api/v1/admin/audit_logs", params: { from: "nope" }, headers: headers
+
+        expect(response).to have_http_status(:bad_request)
+      end
+    end
   end
 end
