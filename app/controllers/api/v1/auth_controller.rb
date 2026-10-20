@@ -6,7 +6,7 @@ module Api
       def login
         user = User.authenticate_by(email: login_params[:email], password: login_params[:password])
         unless user&.active?
-          AuditLog.record(action: "login.failed", outcome: :refused, metadata: { email: login_params[:email] })
+          record_failed_login(user)
           return render_invalid_credentials
         end
 
@@ -34,6 +34,22 @@ module Api
 
       def render_invalid_credentials
         render json: { error: "Invalid email or password" }, status: :unauthorized
+      end
+
+      def record_failed_login(authenticated)
+        actor = authenticated || User.find_by(email: login_params[:email])
+        if actor
+          Current.set(user: actor) do
+            AuditLog.record(action: "login.failed", outcome: :refused, record: actor)
+          end
+        else
+          AuditLog.record(action: "login.failed", outcome: :refused, metadata: { email_digest: email_digest })
+        end
+      end
+
+      def email_digest
+        normalized = login_params[:email].to_s.strip.downcase
+        OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, normalized)
       end
     end
   end
