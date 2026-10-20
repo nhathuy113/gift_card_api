@@ -51,5 +51,21 @@ RSpec.describe "Admin clients API" do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context "without a state" do
+      it "rejects the request" do
+        patch "/api/v1/admin/clients/#{client.id}/state", params: {}, headers: headers, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "with a null state" do
+      it "rejects the request" do
+        patch "/api/v1/admin/clients/#{client.id}/state", params: { state: nil }, headers: headers, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 end

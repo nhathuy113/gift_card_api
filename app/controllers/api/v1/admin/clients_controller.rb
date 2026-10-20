@@ -11,6 +11,7 @@ module Api
 
         def state
           client = ::Client.find(params[:id])
+          return render json: { error: "Invalid state" }, status: :unprocessable_entity if params[:state].blank?
           return render json: client.errors, status: :unprocessable_entity unless client.update(state: params[:state])
 
           render json: ClientSerializer.new(client)
