@@ -8,5 +8,10 @@ FactoryBot.define do
     price_value { 50_000 }
     payout_rate { 12.5 }
     issued_at { Time.current }
+
+    trait :cancelled do
+      status { "cancelled" }
+      cancelled_at { Time.current }
+    end
   end
 end

@@ -362,6 +362,47 @@ paths:
                     example: Activation number is already used
         "422":
           $ref: "#/components/responses/Error"
+  /api/v1/client/cards/cancel:
+    post:
+      summary: Cancel an issued card
+      tags: [Client]
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [activation_number]
+              properties:
+                activation_number:
+                  type: string
+                  pattern: "^\\d{16}$"
+                  example: "0000000000000099"
+      responses:
+        "200":
+          description: Cancelled card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          description: Card already cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Card already cancelled
   /api/v1/admin/audit_logs:
     get:
       summary: List audit logs

@@ -22,7 +22,9 @@ Rails.application.routes.draw do
 
       namespace :client do
         resources :products, only: :index
-        resources :cards, only: :create
+        resources :cards, only: :create do
+          post :cancel, on: :collection
+        end
       end
     end
   end

@@ -1,0 +1,20 @@
+require "rails_helper"
+
+RSpec.describe "GET /api-docs/v1/swagger.yaml" do
+  it "requires an activation number to cancel" do
+    get "/api-docs/v1/swagger.yaml"
+
+    schema = YAML.safe_load(response.body).dig(
+      "paths", "/api/v1/client/cards/cancel", "post",
+      "requestBody", "content", "application/json", "schema"
+    )
+    expect(schema["required"]).to eq(["activation_number"])
+  end
+
+  it "lists the cancel responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/client/cards/cancel", "post", "responses")
+    expect(responses.keys).to eq(%w[200 401 403 404 422])
+  end
+end
