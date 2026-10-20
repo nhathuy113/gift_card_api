@@ -33,4 +33,34 @@ RSpec.describe "Authentication API", type: :request do
     expect(response).to have_http_status(:unauthorized)
     expect(response.parsed_body["error"]).to eq("Invalid email or password")
   end
+
+  it "rejects an expired token" do
+    login("admin@example.com")
+    token = response.parsed_body.fetch("token")
+
+    travel 2.hours do
+      get "/api/v1/admin/brands", headers: { "Authorization" => "Bearer #{token}" }
+    end
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
+  it "revokes the current token" do
+    login("admin@example.com")
+    token = response.parsed_body.fetch("token")
+
+    post "/api/v1/logout", headers: { "Authorization" => "Bearer #{token}" }
+
+    expect(response).to have_http_status(:no_content)
+  end
+
+  it "rejects a revoked token" do
+    login("admin@example.com")
+    token = response.parsed_body.fetch("token")
+    post "/api/v1/logout", headers: { "Authorization" => "Bearer #{token}" }
+
+    get "/api/v1/admin/brands", headers: { "Authorization" => "Bearer #{token}" }
+
+    expect(response).to have_http_status(:unauthorized)
+  end
 end

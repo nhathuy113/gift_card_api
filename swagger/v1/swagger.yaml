@@ -31,6 +31,17 @@ paths:
                 $ref: "#/components/schemas/Login"
         "401":
           $ref: "#/components/responses/Error"
+  /api/v1/logout:
+    post:
+      summary: Log out
+      tags: [Login]
+      security:
+        - bearer: []
+      responses:
+        "204":
+          description: Token revoked
+        "401":
+          $ref: "#/components/responses/Error"
   /api/v1/admin/clients:
     post:
       summary: Create a client

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_105000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -87,6 +87,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_105000) do
     t.check_constraint "jsonb_array_length(custom_fields) <= 5", name: "products_custom_fields_max5"
     t.check_constraint "price_value > 0", name: "products_price_value_positive"
     t.check_constraint "state::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "products_state_check"
+  end
+
+  create_table "revoked_tokens", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.index ["jti"], name: "index_revoked_tokens_on_jti", unique: true
   end
 
   create_table "users", force: :cascade do |t|

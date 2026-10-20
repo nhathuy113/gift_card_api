@@ -22,6 +22,7 @@ module Authenticatable
 
     payload = JwtService.decode(token)
     return nil if payload.blank?
+    return nil if RevokedToken.exists?(jti: payload[:jti])
 
     user = User.find_by(id: payload[:user_id])
     user if user&.active?
