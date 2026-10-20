@@ -793,7 +793,7 @@ components:
           format: date-time
     BrandReport:
       type: object
-      required: [brand_id, name, issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      required: [brand_id, name, issued_count, issued_total_value, payout_total_value, cancelled_count, cancelled_total_value]
       properties:
         brand_id:
           type: integer
@@ -801,31 +801,31 @@ components:
           type: string
         issued_count:
           type: integer
-        issued_total:
+        issued_total_value:
           type: integer
-        payout_total:
+        payout_total_value:
           type: number
         cancelled_count:
           type: integer
-        cancelled_total:
+        cancelled_total_value:
           type: integer
     SpendingReport:
       type: object
-      required: [issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      required: [issued_count, issued_total_value, payout_total_value, cancelled_count, cancelled_total_value]
       properties:
         issued_count:
           type: integer
-        issued_total:
+        issued_total_value:
           type: integer
-        payout_total:
+        payout_total_value:
           type: number
         cancelled_count:
           type: integer
-        cancelled_total:
+        cancelled_total_value:
           type: integer
     ClientReport:
       type: object
-      required: [client_id, email, issued_count, issued_total, payout_total, cancelled_count, cancelled_total]
+      required: [client_id, email, issued_count, issued_total_value, payout_total_value, cancelled_count, cancelled_total_value]
       properties:
         client_id:
           type: integer
@@ -833,13 +833,13 @@ components:
           type: string
         issued_count:
           type: integer
-        issued_total:
+        issued_total_value:
           type: integer
-        payout_total:
+        payout_total_value:
           type: number
         cancelled_count:
           type: integer
-        cancelled_total:
+        cancelled_total_value:
           type: integer
     AuditLogPage:
       type: object

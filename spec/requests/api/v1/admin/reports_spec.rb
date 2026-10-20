@@ -26,10 +26,10 @@ RSpec.describe "Admin reports API" do
           "brand_id" => brand.id,
           "name" => "Starbucks",
           "issued_count" => 2,
-          "issued_total" => 70_000,
-          "payout_total" => 8750.0,
+          "issued_total_value" => 70_000,
+          "payout_total_value" => 8750.0,
           "cancelled_count" => 1,
-          "cancelled_total" => 20_000
+          "cancelled_total_value" => 20_000
         }
       ])
     end
@@ -47,10 +47,10 @@ RSpec.describe "Admin reports API" do
             "brand_id" => brand.id,
             "name" => "Starbucks",
             "issued_count" => 1,
-            "issued_total" => 30_000,
-            "payout_total" => 3750.0,
+            "issued_total_value" => 30_000,
+            "payout_total_value" => 3750.0,
             "cancelled_count" => 0,
-            "cancelled_total" => 0
+            "cancelled_total_value" => 0
           }
         ])
       end
@@ -74,10 +74,10 @@ RSpec.describe "Admin reports API" do
           "client_id" => client.id,
           "email" => "a@example.com",
           "issued_count" => 2,
-          "issued_total" => 70_000,
-          "payout_total" => 8750.0,
+          "issued_total_value" => 70_000,
+          "payout_total_value" => 8750.0,
           "cancelled_count" => 1,
-          "cancelled_total" => 20_000
+          "cancelled_total_value" => 20_000
         }
       ])
     end

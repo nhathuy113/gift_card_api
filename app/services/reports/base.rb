@@ -26,20 +26,20 @@ module Reports
       cancelled_cards = ranged_cards(cards.cancelled, :cancelled_at)
       {
         "issued_count" => issued_cards.count,
-        "issued_total" => issued_cards.sum(:price_value),
-        "payout_total" => issued_cards.sum(payout_sum).to_f,
+        "issued_total_value" => issued_cards.sum(:price_value),
+        "payout_total_value" => issued_cards.sum(payout_sum).to_f,
         "cancelled_count" => cancelled_cards.count,
-        "cancelled_total" => cancelled_cards.sum(:price_value)
+        "cancelled_total_value" => cancelled_cards.sum(:price_value)
       }
     end
 
     def metrics_for(totals, id)
       {
         "issued_count" => totals[:issued_counts][id] || 0,
-        "issued_total" => totals[:issued_totals][id] || 0,
-        "payout_total" => (totals[:issued_payouts][id] || 0).to_f,
+        "issued_total_value" => totals[:issued_totals][id] || 0,
+        "payout_total_value" => (totals[:issued_payouts][id] || 0).to_f,
         "cancelled_count" => totals[:cancelled_counts][id] || 0,
-        "cancelled_total" => totals[:cancelled_totals][id] || 0
+        "cancelled_total_value" => totals[:cancelled_totals][id] || 0
       }
     end
 

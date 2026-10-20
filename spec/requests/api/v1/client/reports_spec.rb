@@ -21,10 +21,10 @@ RSpec.describe "GET /api/v1/client/reports" do
 
     expect(response.parsed_body).to eq(
       "issued_count" => 2,
-      "issued_total" => 70_000,
-      "payout_total" => 8750.0,
+      "issued_total_value" => 70_000,
+      "payout_total_value" => 8750.0,
       "cancelled_count" => 1,
-      "cancelled_total" => 20_000
+      "cancelled_total_value" => 20_000
     )
   end
 end
