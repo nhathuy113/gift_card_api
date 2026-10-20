@@ -18,7 +18,7 @@ Rails.application.routes.draw do
         end
         resources :brands, except: :destroy do
           patch :state, on: :member
-          resources :products, except: :show, shallow: true do
+          resources :products, shallow: true do
             patch :state, on: :member
           end
         end

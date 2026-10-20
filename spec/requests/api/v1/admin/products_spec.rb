@@ -26,6 +26,16 @@ RSpec.describe "Admin Products API" do
     end
   end
 
+  describe "GET /api/v1/admin/products/:id" do
+    let(:product) { create(:product, brand: brand, name: "Card 50k") }
+
+    it "shows the product" do
+      get "/api/v1/admin/products/#{product.id}", headers: headers
+
+      expect(response.parsed_body).to include("id" => product.id, "name" => "Card 50k")
+    end
+  end
+
   describe "PATCH /api/v1/admin/products/:id" do
     let(:product) { create(:product, brand: brand, name: "Initial", price_value: 50_000) }
 

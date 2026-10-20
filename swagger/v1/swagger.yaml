@@ -277,6 +277,26 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
   /api/v1/admin/products/{id}:
+    get:
+      summary: Show a product
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
     patch:
       summary: Update a product
       tags: [Admin]

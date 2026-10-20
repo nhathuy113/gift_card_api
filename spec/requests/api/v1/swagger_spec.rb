@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe "GET /api-docs/v1/swagger.yaml" do
+  it "lists the product show responses" do
+    get "/api-docs/v1/swagger.yaml"
+
+    responses = YAML.safe_load(response.body).dig("paths", "/api/v1/admin/products/{id}", "get", "responses")
+    expect(responses.keys).to eq(%w[200 401 403 404])
+  end
+
   it "lists the logout responses" do
     get "/api-docs/v1/swagger.yaml"
 
