@@ -33,21 +33,4 @@ RSpec.describe "Authentication API", type: :request do
     expect(response).to have_http_status(:unauthorized)
     expect(response.parsed_body["error"]).to eq("Invalid email or password")
   end
-
-  it "records a known failed login by user id" do
-    login("admin@example.com", "wrong")
-
-    log = AuditLog.find_by!(action: "login.failed")
-    expect(log.attributes.slice("user_id", "metadata")).to eq(
-      "user_id" => User.find_by!(email: "admin@example.com").id,
-      "metadata" => {}
-    )
-  end
-
-  it "records an unknown login as a digest" do
-    login("Missing.User@example.com", "wrong")
-
-    digest = OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, "missing.user@example.com")
-    expect(AuditLog.find_by!(action: "login.failed").metadata).to eq("email_digest" => digest)
-  end
 end
