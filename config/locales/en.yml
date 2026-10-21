@@ -9,6 +9,8 @@ en:
   cards:
     cancel:
       already_cancelled: Card already cancelled
+      not_found: card not found or you dont have access
+      invalid_pin: Invalid pin
     issue:
       activation_number_used: Activation number is already used
       client_inactive: Client is inactive

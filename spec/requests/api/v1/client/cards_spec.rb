@@ -81,7 +81,7 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
 
   it "cancels an issued card" do
     post "/api/v1/client/cards/cancel",
-         params: { activation_number: card.activation_number },
+         params: { activation_number: card.activation_number, pin: card.pin },
          headers: headers,
          as: :json
 
@@ -90,11 +90,44 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
 
   it "records the cancel" do
     post "/api/v1/client/cards/cancel",
-         params: { activation_number: card.activation_number },
+         params: { activation_number: card.activation_number, pin: card.pin },
          headers: headers,
          as: :json
 
     expect(AuditLog.order(:id).last.action).to eq("card.cancel")
+  end
+
+  context "when the card has no pin" do
+    let(:card) { create(:card, client:, pin: nil) }
+
+    it "cancels the card" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number },
+           headers: headers,
+           as: :json
+
+      expect(response.parsed_body["status"]).to eq("cancelled")
+    end
+  end
+
+  context "when the pin does not match" do
+    it "returns an invalid pin error" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number, pin: "000000" },
+           headers: headers,
+           as: :json
+
+      expect(response.parsed_body["error"]).to eq("Invalid pin")
+    end
+
+    it "keeps the card issued" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number, pin: "000000" },
+           headers: headers,
+           as: :json
+
+      expect(card.reload.status).to eq("issued")
+    end
   end
 
   context "when the card is already cancelled" do
@@ -102,7 +135,7 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
 
     it "refuses the cancel" do
       post "/api/v1/client/cards/cancel",
-           params: { activation_number: card.activation_number },
+           params: { activation_number: card.activation_number, pin: card.pin },
            headers: headers,
            as: :json
 
@@ -111,11 +144,22 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
 
     it "records the refused cancel" do
       post "/api/v1/client/cards/cancel",
-           params: { activation_number: card.activation_number },
+           params: { activation_number: card.activation_number, pin: card.pin },
            headers: headers,
            as: :json
 
       expect(AuditLog.order(:id).last.outcome).to eq("refused")
+    end
+  end
+
+  context "when the activation number does not exist" do
+    it "says the card is missing or inaccessible" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: "0000000000000001" },
+           headers: headers,
+           as: :json
+
+      expect(response.parsed_body["error"]).to eq("card not found or you dont have access")
     end
   end
 
@@ -129,6 +173,15 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
            as: :json
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it "says the card is missing or inaccessible" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number, pin: card.pin },
+           headers: headers,
+           as: :json
+
+      expect(response.parsed_body["error"]).to eq("card not found or you dont have access")
     end
   end
 end

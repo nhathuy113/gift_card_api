@@ -22,7 +22,10 @@ module Api
         end
 
         def cancel
-          card = current_client.cards.find_by!(activation_number: params[:activation_number])
+          card = current_client.cards.find_by(activation_number: params[:activation_number])
+          return render json: { error: I18n.t("cards.cancel.not_found") }, status: :not_found unless card
+          return render json: { error: I18n.t("cards.cancel.invalid_pin") }, status: :unprocessable_content unless pin_matches?(card)
+
           card.cancel!
           render json: CardSerializer.new(card)
         rescue ActiveRecord::RecordInvalid
@@ -33,6 +36,12 @@ module Api
 
         def card_params
           params.permit(:product_id, :activation_number)
+        end
+
+        def pin_matches?(card)
+          return true if card.pin.blank?
+
+          ActiveSupport::SecurityUtils.secure_compare(card.pin, params[:pin].to_s)
         end
       end
     end

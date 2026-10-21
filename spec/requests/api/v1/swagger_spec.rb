@@ -39,6 +39,26 @@ RSpec.describe "GET /api-docs/v1/swagger.yaml" do
     expect(schema["required"]).to eq(["activation_number"])
   end
 
+  it "accepts a pin when cancelling" do
+    get "/api-docs/v1/swagger.yaml"
+
+    properties = YAML.safe_load(response.body).dig(
+      "paths", "/api/v1/client/cards/cancel", "post",
+      "requestBody", "content", "application/json", "schema", "properties"
+    )
+    expect(properties.keys).to include("pin")
+  end
+
+  it "describes a missing card on cancel" do
+    get "/api-docs/v1/swagger.yaml"
+
+    example = YAML.safe_load(response.body).dig(
+      "paths", "/api/v1/client/cards/cancel", "post",
+      "responses", "404", "content", "application/json", "schema", "properties", "error", "example"
+    )
+    expect(example).to eq("card not found or you dont have access")
+  end
+
   it "lists the cancel responses" do
     get "/api-docs/v1/swagger.yaml"
 
