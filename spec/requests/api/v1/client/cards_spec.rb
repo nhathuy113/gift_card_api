@@ -39,6 +39,28 @@ RSpec.describe "Client Cards API" do
     expect(response.parsed_body["activation_number"]).to eq("0000000000000099")
   end
 
+  it "refuses an inactive product" do
+    product.update!(state: "inactive")
+
+    post "/api/v1/client/cards",
+         params: { product_id: product.id, activation_number: "0000000000000003" },
+         headers: headers,
+         as: :json
+
+    expect(response.parsed_body["error"]).to eq("Product is not available")
+  end
+
+  it "refuses a product from an inactive brand" do
+    product.brand.update!(state: "inactive")
+
+    post "/api/v1/client/cards",
+         params: { product_id: product.id, activation_number: "0000000000000004" },
+         headers: headers,
+         as: :json
+
+    expect(response.parsed_body["error"]).to eq("Product is not available")
+  end
+
   it "refuses a product the client cannot access" do
     other = create(:product, brand: create(:brand), price_value: 20_000)
 
@@ -66,6 +88,15 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
     expect(response.parsed_body.slice("id", "status")).to eq("id" => card.id, "status" => "cancelled")
   end
 
+  it "records the cancel" do
+    post "/api/v1/client/cards/cancel",
+         params: { activation_number: card.activation_number },
+         headers: headers,
+         as: :json
+
+    expect(AuditLog.order(:id).last.action).to eq("card.cancel")
+  end
+
   context "when the card is already cancelled" do
     let(:card) { create(:card, :cancelled, client:) }
 
@@ -76,6 +107,15 @@ RSpec.describe "POST /api/v1/client/cards/cancel" do
            as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "records the refused cancel" do
+      post "/api/v1/client/cards/cancel",
+           params: { activation_number: card.activation_number },
+           headers: headers,
+           as: :json
+
+      expect(AuditLog.order(:id).last.outcome).to eq("refused")
     end
   end
 

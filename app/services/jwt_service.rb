@@ -1,9 +1,9 @@
 class JwtService
   ALGORITHM = "HS256".freeze
-  TTL = 12.hours
+  TTL = 1.hour
 
   def self.encode(user)
-    payload = { user_id: user.id, role: user.role, exp: TTL.from_now.to_i }
+    payload = { user_id: user.id, role: user.role, jti: SecureRandom.uuid, exp: TTL.from_now.to_i }
     JWT.encode(payload, secret, ALGORITHM)
   end
 

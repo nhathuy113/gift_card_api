@@ -1,0 +1,2 @@
+class RevokedToken < ApplicationRecord
+end

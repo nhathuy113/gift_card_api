@@ -14,8 +14,12 @@ class Card < ApplicationRecord
   validates :issued_at, presence: true
 
   def cancel!
-    raise ActiveRecord::RecordInvalid.new(self) unless issued?
+    unless issued?
+      AuditLog.record(action: "card.cancel", record: self, outcome: :refused, metadata: { "reason" => I18n.t("cards.cancel.already_cancelled") })
+      raise ActiveRecord::RecordInvalid.new(self)
+    end
 
     update!(status: "cancelled", cancelled_at: Time.current)
+    AuditLog.record(action: "card.cancel", record: self, before: { "status" => "issued" }, after: { "status" => "cancelled" })
   end
 end

@@ -2,10 +2,14 @@ module Api
   module V1
     module Admin
       class ProductsController < BaseController
-        before_action :set_product, only: %i[update destroy state]
+        before_action :set_product, only: %i[show update destroy state]
 
         def index
           render json: ProductSerializer.new(Brand.find(params[:brand_id]).products)
+        end
+
+        def show
+          render json: ProductSerializer.new(@product)
         end
 
         def create

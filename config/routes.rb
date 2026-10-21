@@ -6,18 +6,19 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "login", to: "auth#login"
+      post "logout", to: "auth#logout"
 
       namespace :admin do
         get "reports/brands", to: "reports#brands"
         get "reports/clients", to: "reports#clients"
         resources :audit_logs, only: :index
-        resources :clients, only: [:create] do
+        resources :clients, only: [:index, :show, :create] do
           patch :state, on: :member
           resource :client_accessible_products, only: %i[show update]
         end
         resources :brands, except: :destroy do
           patch :state, on: :member
-          resources :products, except: :show, shallow: true do
+          resources :products, shallow: true do
             patch :state, on: :member
           end
         end

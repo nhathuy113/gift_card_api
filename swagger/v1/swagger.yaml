@@ -31,7 +31,36 @@ paths:
                 $ref: "#/components/schemas/Login"
         "401":
           $ref: "#/components/responses/Error"
+  /api/v1/logout:
+    post:
+      summary: Log out
+      tags: [Login]
+      security:
+        - bearer: []
+      responses:
+        "204":
+          description: Token revoked
+        "401":
+          $ref: "#/components/responses/Error"
   /api/v1/admin/clients:
+    get:
+      summary: List clients
+      tags: [Admin]
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Clients ordered by email
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
     post:
       summary: Create a client
       tags: [Admin]
@@ -64,6 +93,27 @@ paths:
           $ref: "#/components/responses/Error"
         "422":
           $ref: "#/components/responses/Validation"
+  /api/v1/admin/clients/{id}:
+    get:
+      summary: Show a client
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
   /api/v1/admin/clients/{id}/state:
     patch:
       summary: Change client state
@@ -266,6 +316,26 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
   /api/v1/admin/products/{id}:
+    get:
+      summary: Show a product
+      tags: [Admin]
+      security:
+        - bearer: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
     patch:
       summary: Update a product
       tags: [Admin]
