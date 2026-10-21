@@ -509,6 +509,10 @@ paths:
                   type: string
                   pattern: "^\\d{16}$"
                   example: "0000000000000099"
+                pin:
+                  type: string
+                  description: Required when the card has a pin
+                  example: "123456"
       responses:
         "200":
           description: Cancelled card
@@ -521,9 +525,17 @@ paths:
         "403":
           $ref: "#/components/responses/Error"
         "404":
-          $ref: "#/components/responses/Error"
+          description: Card not found or no access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: card not found or you dont have access
         "422":
-          description: Card already cancelled
+          description: Card already cancelled or pin does not match
           content:
             application/json:
               schema:
